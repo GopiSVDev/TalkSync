@@ -20,6 +20,9 @@ public class User {
     @GeneratedValue
     private UUID id;
     private String name;
+
+    @Column(unique = true, nullable = false)
+    private String username;
     private String avatarUrl;
 
     @Column(nullable = true)
