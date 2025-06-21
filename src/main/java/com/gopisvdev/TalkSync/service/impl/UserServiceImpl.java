@@ -10,6 +10,7 @@ import com.gopisvdev.TalkSync.repository.ChatParticipantRepository;
 import com.gopisvdev.TalkSync.repository.MessageRepository;
 import com.gopisvdev.TalkSync.repository.MessageSeenRepository;
 import com.gopisvdev.TalkSync.repository.UserRepository;
+import com.gopisvdev.TalkSync.service.CustomUserDetails;
 import com.gopisvdev.TalkSync.service.JwtService;
 import com.gopisvdev.TalkSync.service.UserService;
 import jakarta.transaction.Transactional;
@@ -46,19 +47,35 @@ public class UserServiceImpl implements UserService {
     private final JwtService jwtService;
 
     @Override
-    public User register(String username, String password, String displayName) {
+    public LoginResponse register(String username, String password, String displayName) {
+        User user = null;
+
         if (userRepository.existsByUsername(username)) {
             throw new UsernameAlreadyExistsException("Username already exists");
         }
 
-        User user = User.builder()
+        user = User.builder()
                 .username(username)
                 .passwordHash(passwordEncoder.encode(password))
                 .name(displayName)
                 .isTemporary(false)
                 .build();
 
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        user = userRepository.findByUsername(username).get();
+        String token = jwtService.generateToken(user.getUsername());
+
+        UserResponse userResponse = UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .displayName(user.getName())
+                .avatarUrl(user.getAvatarUrl())
+                .isOnline(user.getIsOnline())
+                .lastSeen(user.getLastSeen())
+                .build();
+
+        return new LoginResponse(token, userResponse);
     }
 
     @Override
@@ -67,7 +84,9 @@ public class UserServiceImpl implements UserService {
 
         String token = jwtService.generateToken(username);
 
-        User user = (User) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        
+        User user = userDetails.getUser();
         UserResponse userResponse = UserResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
@@ -84,7 +103,6 @@ public class UserServiceImpl implements UserService {
     public Optional<User> getUserById(UUID id) {
         return userRepository.findById(id);
     }
-
 
     @Override
     public User updateProfile(UUID id, UserUpdateRequest updateRequest) {
@@ -115,17 +133,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createTemporaryUser() {
+    public LoginResponse createTemporaryUser() {
+
+        User tempUser = null;
         String randomName = "Guest" + UUID.randomUUID().toString().substring(0, 8);
 
-        User tempUser = User.builder()
+        tempUser = User.builder()
                 .username("guest_" + UUID.randomUUID())
                 .name(randomName)
                 .isTemporary(true)
                 .expiresAt(LocalDateTime.now().plusHours(24))
                 .build();
 
-        return userRepository.save(tempUser);
+        userRepository.save(tempUser);
+
+        tempUser = userRepository.findByUsername(tempUser.getUsername()).get();
+
+        String token = jwtService.generateToken(tempUser.getUsername());
+
+        UserResponse userResponse = UserResponse.builder()
+                .id(tempUser.getId())
+                .username(tempUser.getUsername())
+                .displayName(tempUser.getName())
+                .avatarUrl(tempUser.getAvatarUrl())
+                .isOnline(tempUser.getIsOnline())
+                .lastSeen(tempUser.getLastSeen())
+                .build();
+
+        return new LoginResponse(token, userResponse);
     }
 
     @Override

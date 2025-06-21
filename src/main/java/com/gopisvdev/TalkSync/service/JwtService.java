@@ -13,9 +13,11 @@ import java.util.Map;
 
 @Service
 public class JwtService {
+    private final String secretKey;
 
-    @Value("${jwt.secret}")
-    private String secretKey;
+    public JwtService(@Value("${jwt.secret}") String secretKey) {
+        this.secretKey = secretKey;
+    }
 
     private SecretKey getKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());

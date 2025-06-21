@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -20,7 +21,8 @@ public class Message {
     @GeneratedValue
     private UUID id;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_id")
     private Chat chat;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,6 +33,8 @@ public class Message {
 
     @Enumerated(EnumType.STRING)
     private MediaType mediaType;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
 
 

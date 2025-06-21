@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Service
 public interface UserService {
-    User register(String username, String password, String displayName);
+    LoginResponse register(String username, String password, String displayName);
 
     LoginResponse login(String username, String password);
 
@@ -23,7 +23,7 @@ public interface UserService {
 
     void deleteUser(UUID id);
 
-    User createTemporaryUser();
+    LoginResponse createTemporaryUser();
 
     List<UserResponse> searchUsers(String query);
 
