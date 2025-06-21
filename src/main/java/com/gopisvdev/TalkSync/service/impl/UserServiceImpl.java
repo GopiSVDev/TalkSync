@@ -13,10 +13,11 @@ import com.gopisvdev.TalkSync.repository.UserRepository;
 import com.gopisvdev.TalkSync.service.JwtService;
 import com.gopisvdev.TalkSync.service.UserService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,30 +25,25 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
 
-    @Autowired
-    private MessageSeenRepository messageSeenRepository;
+    private final MessageSeenRepository messageSeenRepository;
 
-    @Autowired
-    private ChatParticipantRepository chatParticipantRepository;
+    private final ChatParticipantRepository chatParticipantRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtService jwtService;
+    private final JwtService jwtService;
 
     @Override
     public User register(String username, String password, String displayName) {
@@ -120,17 +116,41 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createTemporaryUser() {
-        return null;
+        String randomName = "Guest" + UUID.randomUUID().toString().substring(0, 8);
+
+        User tempUser = User.builder()
+                .username("guest_" + UUID.randomUUID())
+                .name(randomName)
+                .isTemporary(true)
+                .expiresAt(LocalDateTime.now().plusHours(24))
+                .build();
+
+        return userRepository.save(tempUser);
     }
 
     @Override
-    public void deleteExpiredTemporaryUsers() {
+    public List<UserResponse> searchUsers(String query) {
+        List<User> users = userRepository.searchUsers(query);
 
-    }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("Unauthenticated");
+        }
 
-    @Override
-    public List<User> searchUsers(String query) {
-        return List.of();
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username).orElseThrow();
+        UUID id = user.getId();
+
+        return users.stream()
+                .filter(u -> !u.getId().equals(id))
+                .map(u -> new UserResponse(
+                        u.getId(),
+                        u.getUsername(),
+                        u.getName(),
+                        u.getAvatarUrl(),
+                        u.getIsOnline(),
+                        u.getLastSeen()
+                )).collect(Collectors.toList());
     }
 
     @Override
@@ -141,10 +161,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateLastSeen(UUID userId, LocalDateTime time) {
 
-    }
-
-    @Override
-    public boolean isUsernameAvailable(String username) {
-        return false;
     }
 }
