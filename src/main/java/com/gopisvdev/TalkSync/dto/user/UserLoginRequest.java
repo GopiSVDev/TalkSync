@@ -1,5 +1,6 @@
 package com.gopisvdev.TalkSync.dto.user;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
@@ -8,6 +9,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserLoginRequest {
+    @NotBlank(message = "Username can't be empty")
     private String username;
+
+    @NotBlank(message = "Password is required")
     private String password;
 }
