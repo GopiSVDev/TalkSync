@@ -1,6 +1,7 @@
 package com.gopisvdev.TalkSync.service;
 
 import com.gopisvdev.TalkSync.dto.user.LoginResponse;
+import com.gopisvdev.TalkSync.dto.user.UserRegisterRequest;
 import com.gopisvdev.TalkSync.dto.user.UserResponse;
 import com.gopisvdev.TalkSync.dto.user.UserUpdateRequest;
 import com.gopisvdev.TalkSync.entity.User;
@@ -13,7 +14,7 @@ import java.util.UUID;
 
 @Service
 public interface UserService {
-    LoginResponse register(String username, String password, String displayName);
+    LoginResponse register(UserRegisterRequest request);
 
     LoginResponse login(String username, String password);
 

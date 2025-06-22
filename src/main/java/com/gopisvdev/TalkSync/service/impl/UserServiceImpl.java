@@ -1,6 +1,7 @@
 package com.gopisvdev.TalkSync.service.impl;
 
 import com.gopisvdev.TalkSync.dto.user.LoginResponse;
+import com.gopisvdev.TalkSync.dto.user.UserRegisterRequest;
 import com.gopisvdev.TalkSync.dto.user.UserResponse;
 import com.gopisvdev.TalkSync.dto.user.UserUpdateRequest;
 import com.gopisvdev.TalkSync.entity.User;
@@ -13,6 +14,7 @@ import com.gopisvdev.TalkSync.repository.UserRepository;
 import com.gopisvdev.TalkSync.service.CustomUserDetails;
 import com.gopisvdev.TalkSync.service.JwtService;
 import com.gopisvdev.TalkSync.service.UserService;
+import com.gopisvdev.TalkSync.service.UsernameGenerator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,24 +48,26 @@ public class UserServiceImpl implements UserService {
 
     private final JwtService jwtService;
 
+    private final UsernameGenerator usernameGenerator;
+
     @Override
-    public LoginResponse register(String username, String password, String displayName) {
+    public LoginResponse register(UserRegisterRequest request) {
         User user = null;
 
-        if (userRepository.existsByUsername(username)) {
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw new UsernameAlreadyExistsException("Username already exists");
         }
 
         user = User.builder()
-                .username(username)
-                .passwordHash(passwordEncoder.encode(password))
-                .name(displayName)
+                .username(request.getUsername())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .name(request.getDisplayName())
                 .isTemporary(false)
                 .build();
 
         userRepository.save(user);
 
-        user = userRepository.findByUsername(username).get();
+        user = userRepository.findByUsername(request.getUsername()).get();
         String token = jwtService.generateToken(user.getUsername());
 
         UserResponse userResponse = UserResponse.builder()
@@ -85,7 +89,7 @@ public class UserServiceImpl implements UserService {
         String token = jwtService.generateToken(username);
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        
+
         User user = userDetails.getUser();
         UserResponse userResponse = UserResponse.builder()
                 .id(user.getId())
@@ -135,11 +139,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginResponse createTemporaryUser() {
 
-        User tempUser = null;
-        String randomName = "Guest" + UUID.randomUUID().toString().substring(0, 8);
+        User tempUser;
+        String randomName;
+
+        do {
+            randomName = usernameGenerator.generateUsername();
+        } while (userRepository.existsByUsername(randomName));
 
         tempUser = User.builder()
-                .username("guest_" + UUID.randomUUID())
+                .username(randomName)
                 .name(randomName)
                 .isTemporary(true)
                 .expiresAt(LocalDateTime.now().plusHours(24))
