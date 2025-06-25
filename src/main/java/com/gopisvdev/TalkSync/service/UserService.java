@@ -20,7 +20,7 @@ public interface UserService {
 
     Optional<User> getUserById(UUID id);
 
-    User updateProfile(UUID id, UserUpdateRequest updateRequest);
+    UserResponse updateProfile(UserUpdateRequest updateRequest);
 
     void deleteUser(UUID id);
 

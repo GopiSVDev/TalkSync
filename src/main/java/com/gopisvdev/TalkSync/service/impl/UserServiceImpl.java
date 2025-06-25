@@ -109,8 +109,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateProfile(UUID id, UserUpdateRequest updateRequest) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+    public UserResponse updateProfile(UserUpdateRequest updateRequest) {
+        User user = userRepository.findById(updateRequest.getId()).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (updateRequest.getDisplayName() != null) {
             user.setName(updateRequest.getDisplayName());
@@ -120,7 +120,21 @@ public class UserServiceImpl implements UserService {
             user.setAvatarUrl(updateRequest.getAvatarUrl());
         }
 
-        return userRepository.save(user);
+        if (updateRequest.getPassword() != null) {
+            user.setPasswordHash(passwordEncoder.encode(updateRequest.getPassword()));
+        }
+
+        userRepository.save(user);
+        user = userRepository.findById(updateRequest.getId()).get();
+
+        return UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .displayName(user.getName())
+                .avatarUrl(user.getAvatarUrl())
+                .isOnline(user.getIsOnline())
+                .lastSeen(user.getLastSeen())
+                .build();
     }
 
     @Override
