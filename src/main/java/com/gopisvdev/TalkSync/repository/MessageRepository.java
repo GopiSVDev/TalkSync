@@ -26,4 +26,6 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
     List<Message> findByChatIdAndContentContainingIgnoreCase(UUID chatId, String keyword);
 
     List<Message> findBySenderId(UUID userId);
+
+    void deleteAllByUserId(UUID userId);
 }

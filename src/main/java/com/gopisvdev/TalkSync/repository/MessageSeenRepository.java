@@ -24,4 +24,6 @@ public interface MessageSeenRepository extends JpaRepository<MessageSeen, UUID> 
                 WHERE ms.message.id = :messageId
             """)
     List<User> findSeenUsersByMessageId(UUID messageId);
+
+    void deleteAllByUserId(UUID userId);
 }

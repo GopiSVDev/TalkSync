@@ -24,4 +24,6 @@ public interface ChatParticipantRepository extends JpaRepository<ChatParticipant
                 WHERE cp.chat.id = :chatId AND cp.user.id <> :userId
             """)
     Optional<User> findOtherParticipant(UUID chatId, UUID userId);
+
+    void deleteAllByUserId(UUID userId);
 }
