@@ -27,5 +27,5 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
 
     List<Message> findBySenderId(UUID userId);
 
-    void deleteAllByUserId(UUID userId);
+    void deleteAllBySender_Id(UUID userId);
 }

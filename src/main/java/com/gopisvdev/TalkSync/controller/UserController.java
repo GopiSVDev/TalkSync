@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -20,9 +21,14 @@ public class UserController {
         return ResponseEntity.ok(userService.updateProfile(request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteProfile(@PathVariable UUID id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search/{keyword}")
+    public ResponseEntity<List<UserResponse>> searchUsers(@PathVariable String keyword) {
+        return ResponseEntity.ok(userService.searchUsers(keyword));
     }
 }
