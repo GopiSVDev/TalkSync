@@ -4,12 +4,10 @@ import com.gopisvdev.TalkSync.dto.user.LoginResponse;
 import com.gopisvdev.TalkSync.dto.user.UserRegisterRequest;
 import com.gopisvdev.TalkSync.dto.user.UserResponse;
 import com.gopisvdev.TalkSync.dto.user.UserUpdateRequest;
-import com.gopisvdev.TalkSync.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -18,7 +16,7 @@ public interface UserService {
 
     LoginResponse login(String username, String password);
 
-    Optional<User> getUserById(UUID id);
+    UserResponse getUserById(UUID id);
 
     UserResponse updateProfile(UserUpdateRequest updateRequest);
 

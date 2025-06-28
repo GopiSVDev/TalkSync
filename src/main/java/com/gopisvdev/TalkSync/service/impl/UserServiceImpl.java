@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -68,7 +67,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         user = userRepository.findByUsername(request.getUsername()).get();
-        String token = jwtService.generateToken(user.getUsername());
+        String token = jwtService.generateToken(user);
 
         UserResponse userResponse = UserResponse.builder()
                 .id(user.getId())
@@ -86,11 +85,13 @@ public class UserServiceImpl implements UserService {
     public LoginResponse login(String username, String password) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-        String token = jwtService.generateToken(username);
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        String token = jwtService.generateToken(user);
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        User user = userDetails.getUser();
+        user = userDetails.getUser();
         UserResponse userResponse = UserResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
@@ -104,8 +105,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUserById(UUID id) {
-        return userRepository.findById(id);
+    public UserResponse getUserById(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+
+        return UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .displayName(user.getName())
+                .avatarUrl(user.getAvatarUrl())
+                .isOnline(user.getIsOnline())
+                .lastSeen(user.getLastSeen())
+                .build();
     }
 
     @Override
@@ -172,7 +182,7 @@ public class UserServiceImpl implements UserService {
 
         tempUser = userRepository.findByUsername(tempUser.getUsername()).get();
 
-        String token = jwtService.generateToken(tempUser.getUsername());
+        String token = jwtService.generateToken(tempUser);
 
         UserResponse userResponse = UserResponse.builder()
                 .id(tempUser.getId())
@@ -213,11 +223,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateOnlineStatus(UUID userId, boolean isOnline) {
-
+        userRepository.findById(userId).ifPresent(user -> {
+            user.setIsOnline(true);
+            userRepository.save(user);
+        });
     }
 
     @Override
     public void updateLastSeen(UUID userId, LocalDateTime time) {
-
+        userRepository.findById(userId).ifPresent(user -> {
+            user.setLastSeen(time);
+            userRepository.save(user);
+        });
     }
 }

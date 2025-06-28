@@ -1,22 +1,17 @@
-package com.gopisvdev.TalkSync.dto.user;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+package com.gopisvdev.TalkSync.dto.chats;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Getter
-@Setter
-@Builder
-@AllArgsConstructor
-public class UserResponse {
+public class ChatPreviewResponse {
     private UUID id;
     private String username;
     private String displayName;
     private String avatarUrl;
     private Boolean isOnline;
     private LocalDateTime lastSeen;
+
+
+    private String lastMessage;
+    private LocalDateTime time;
 }

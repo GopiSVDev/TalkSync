@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -28,13 +30,18 @@ public class Message {
     @ManyToOne(fetch = FetchType.LAZY)
     private User sender;
 
+    @Column(nullable = false)
     private String content;
+
     private String mediaUrl;
 
     @Enumerated(EnumType.STRING)
     private MediaType mediaType;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MessageSeen> seenBy = new ArrayList<>();
 }
 
 

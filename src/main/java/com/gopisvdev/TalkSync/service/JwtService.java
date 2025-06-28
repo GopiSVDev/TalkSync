@@ -1,5 +1,6 @@
 package com.gopisvdev.TalkSync.service;
 
+import com.gopisvdev.TalkSync.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -10,6 +11,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class JwtService {
@@ -36,6 +38,11 @@ public class JwtService {
         return claims.getSubject();
     }
 
+    public UUID extractUserId(String token) {
+        Claims claims = extractAllClaims(token);
+        return UUID.fromString(claims.get("userId", String.class));
+    }
+
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
@@ -44,9 +51,10 @@ public class JwtService {
         return extractAllClaims(token).getExpiration();
     }
 
-    public String generateToken(String username) {
+    public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
+        claims.put("userId", user.getId().toString());
+        return createToken(claims, user.getUsername());
     }
 
     public String createToken(Map<String, Object> claims, String subject) {

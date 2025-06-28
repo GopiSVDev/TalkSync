@@ -31,4 +31,9 @@ public class UserController {
     public ResponseEntity<List<UserResponse>> searchUsers(@PathVariable String keyword) {
         return ResponseEntity.ok(userService.searchUsers(keyword));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponse> getByUserId(@PathVariable UUID id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
 }
