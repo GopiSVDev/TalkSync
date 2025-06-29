@@ -1,6 +1,8 @@
 package com.gopisvdev.TalkSync.websocket;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -9,10 +11,11 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Component
 @EnableWebSocketMessageBroker
+@Configuration
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Autowired
-    private JwtHandshakeInterceptor jwtHandshakeInterceptor;
+    private StompAuthChannelInterceptor stompAuthChannelInterceptor;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -23,8 +26,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .addInterceptors(jwtHandshakeInterceptor)
                 .setAllowedOrigins("http://localhost:5173")
                 .withSockJS();
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(stompAuthChannelInterceptor);
     }
 }
