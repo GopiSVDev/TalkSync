@@ -35,9 +35,6 @@ public class WebSocketEventListener {
 
     private UUID extractUserId(AbstractSubProtocolEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-        String token = (String) accessor.getSessionAttributes().get("token");
-        if (token == null) return null;
-
-        return jwtService.extractUserId(token);
+        return (UUID) accessor.getSessionAttributes().get("userId");
     }
 }
