@@ -31,4 +31,8 @@ public class Chat {
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatParticipant> participants = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "last_message_id")
+    private Message lastMessage;
 }

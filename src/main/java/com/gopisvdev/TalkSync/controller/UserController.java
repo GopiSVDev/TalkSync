@@ -2,7 +2,7 @@ package com.gopisvdev.TalkSync.controller;
 
 import com.gopisvdev.TalkSync.dto.user.UserResponse;
 import com.gopisvdev.TalkSync.dto.user.UserUpdateRequest;
-import com.gopisvdev.TalkSync.service.UserService;
+import com.gopisvdev.TalkSync.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

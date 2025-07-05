@@ -14,8 +14,6 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    List<User> findByNameContainingIgnoreCase(String name);
-
     Optional<User> findByUsername(String username);
 
     @Query("SELECT u FROM User u WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :query, '%')) " +
@@ -23,8 +21,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     List<User> searchUsers(@Param("query") String query);
 
     boolean existsByUsername(String username);
-
-    List<User> findByIsOnlineTrue();
 
     List<User> findByIsTemporaryTrueAndExpiresAtBefore(LocalDateTime time);
 }

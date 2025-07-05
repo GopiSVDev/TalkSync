@@ -28,4 +28,13 @@ public interface ChatRepository extends JpaRepository<Chat, UUID> {
                 AND p1.user.id = :userA AND p2.user.id = :userB
             """)
     Optional<Chat> findDirectChatBetween(UUID userA, UUID userB);
+
+    @Query("""
+              SELECT c FROM Chat c
+              LEFT JOIN FETCH c.participants p
+              LEFT JOIN FETCH p.user
+              WHERE c.id = :chatId
+            """)
+    Optional<Chat> findByIdWithParticipants(UUID chatId);
+
 }

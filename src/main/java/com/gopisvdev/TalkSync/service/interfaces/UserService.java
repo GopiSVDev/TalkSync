@@ -1,4 +1,4 @@
-package com.gopisvdev.TalkSync.service;
+package com.gopisvdev.TalkSync.service.interfaces;
 
 import com.gopisvdev.TalkSync.dto.user.LoginResponse;
 import com.gopisvdev.TalkSync.dto.user.UserRegisterRequest;

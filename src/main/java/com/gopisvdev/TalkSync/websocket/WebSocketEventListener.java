@@ -1,6 +1,6 @@
 package com.gopisvdev.TalkSync.websocket;
 
-import com.gopisvdev.TalkSync.service.UserService;
+import com.gopisvdev.TalkSync.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
