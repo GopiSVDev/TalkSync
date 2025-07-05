@@ -21,6 +21,6 @@ public class ChatSummaryResponse {
     private String lastMessage;
     private LocalDateTime lastMessageTime;
 
-    private boolean isOnline; // for private chats only
+    private boolean isOnline;
     private String lastSeen;
 }

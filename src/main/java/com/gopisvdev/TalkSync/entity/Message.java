@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,7 +39,10 @@ public class Message {
     @Enumerated(EnumType.STRING)
     private MediaType mediaType;
 
+    @CreationTimestamp
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime sentAt;
 
     @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MessageSeen> seenBy = new ArrayList<>();
