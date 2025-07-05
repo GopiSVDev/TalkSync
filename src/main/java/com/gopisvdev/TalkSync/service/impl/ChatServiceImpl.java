@@ -81,7 +81,7 @@ public class ChatServiceImpl implements ChatService {
             newChat.getParticipants().add(participant1);
             newChat.getParticipants().add(participant2);
 
-            return newChat;
+            return chatRepository.save(newChat);
         });
 
         UUID otherUserId = chat.getParticipants().stream()

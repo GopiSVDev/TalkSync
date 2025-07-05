@@ -3,6 +3,7 @@ package com.gopisvdev.TalkSync.controller;
 import com.gopisvdev.TalkSync.dto.chat.ChatResponse;
 import com.gopisvdev.TalkSync.dto.chat.ChatSummaryResponse;
 import com.gopisvdev.TalkSync.service.interfaces.ChatService;
+import com.gopisvdev.TalkSync.utils.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,9 @@ import java.util.UUID;
 public class ChatController {
     private final ChatService chatService;
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<ChatSummaryResponse>> getUserChats(@PathVariable UUID userId) {
+    @GetMapping
+    public ResponseEntity<List<ChatSummaryResponse>> getUserChats() {
+        UUID userId = AuthUtil.getCurrentUserId();
         return ResponseEntity.ok(chatService.getUserChats(userId));
     }
 
