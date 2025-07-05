@@ -224,7 +224,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateOnlineStatus(UUID userId, boolean isOnline) {
         userRepository.findById(userId).ifPresent(user -> {
-            user.setIsOnline(true);
+            user.setIsOnline(isOnline);
             userRepository.save(user);
         });
     }
