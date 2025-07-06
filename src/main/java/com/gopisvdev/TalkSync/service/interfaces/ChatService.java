@@ -1,9 +1,9 @@
 package com.gopisvdev.TalkSync.service.interfaces;
 
 import com.gopisvdev.TalkSync.dto.chat.ChatResponse;
-import com.gopisvdev.TalkSync.dto.chat.ChatSummaryResponse;
 import com.gopisvdev.TalkSync.dto.chat.CreateGroupChatRequest;
 import com.gopisvdev.TalkSync.dto.chat.UpdateGroupChatRequest;
+import com.gopisvdev.TalkSync.entity.Chat;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,9 +11,11 @@ import java.util.UUID;
 
 public interface ChatService {
 
-    List<ChatSummaryResponse> getUserChats(UUID userId);
+    List<ChatResponse> getUserChats(UUID userId);
 
-    ChatResponse getOrCreatePrivateChat(UUID userId, UUID targetUserId);
+    ChatResponse getPrivateChat(UUID userId, UUID targetUserId);
+
+    Chat createPrivateChat(UUID userId, UUID targetUserId);
 
     ChatResponse createGroupChat(CreateGroupChatRequest request, UUID creatorId);
 

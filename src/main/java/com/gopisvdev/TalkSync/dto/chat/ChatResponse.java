@@ -21,5 +21,8 @@ public class ChatResponse {
     private boolean isGroup;
     private LocalDateTime createdAt;
 
+    private String lastMessage;
+    private LocalDateTime lastMessageTime;
+
     private List<UserResponse> participants;
 }

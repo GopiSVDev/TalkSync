@@ -3,6 +3,7 @@ package com.gopisvdev.TalkSync.repository;
 import com.gopisvdev.TalkSync.entity.Chat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,12 +23,13 @@ public interface ChatRepository extends JpaRepository<Chat, UUID> {
 
     @Query("""
                 SELECT c FROM Chat c
-                JOIN c.participants p1
-                JOIN c.participants p2
+                JOIN c.participants p
                 WHERE c.isGroup = false
-                AND p1.user.id = :userA AND p2.user.id = :userB
+                  AND p.user.id IN (:userA, :userB)
+                GROUP BY c
+                HAVING COUNT(DISTINCT p.user.id) = 2
             """)
-    Optional<Chat> findDirectChatBetween(UUID userA, UUID userB);
+    Optional<Chat> findDirectChatBetween(@Param("userA") UUID userA, @Param("userB") UUID userB);
 
     @Query("""
               SELECT c FROM Chat c
