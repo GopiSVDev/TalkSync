@@ -3,11 +3,14 @@ package com.gopisvdev.TalkSync.repository;
 import com.gopisvdev.TalkSync.entity.MessageSeen;
 import com.gopisvdev.TalkSync.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
 
+@Repository
 public interface MessageSeenRepository extends JpaRepository<MessageSeen, UUID> {
     List<MessageSeen> findByMessageId(UUID messageId);
 
@@ -25,5 +28,6 @@ public interface MessageSeenRepository extends JpaRepository<MessageSeen, UUID> 
             """)
     List<User> findSeenUsersByMessageId(UUID messageId);
 
+    @Modifying
     void deleteAllByUserId(UUID userId);
 }

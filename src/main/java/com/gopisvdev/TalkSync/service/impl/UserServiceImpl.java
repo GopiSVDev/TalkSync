@@ -154,9 +154,9 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("User not found with ID: " + id);
         }
 
+        chatParticipantRepository.deleteAllByUserId(id);
         messageRepository.deleteAllBySender_Id(id);
         messageSeenRepository.deleteAllByUserId(id);
-        chatParticipantRepository.deleteAllByUserId(id);
 
         userRepository.deleteById(id);
     }

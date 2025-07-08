@@ -86,12 +86,22 @@ public class ChatServiceImpl implements ChatService {
 
         User otherUser = userRepository.findById(otherUserId).orElseThrow(() -> new UserNotFoundException("User not found"));
 
+        List<UserResponse> participants = List.of(new UserResponse(
+                otherUser.getId(),
+                otherUser.getUsername(),
+                otherUser.getName(),
+                otherUser.getAvatarUrl(),
+                otherUser.getIsOnline(),
+                otherUser.getLastSeen()
+        ));
+
         return ChatResponse.builder()
                 .chatId(chat.getId())
                 .name(otherUser.getName())
                 .avatarUrl(otherUser.getAvatarUrl())
                 .isGroup(false)
                 .createdAt(chat.getCreatedAt())
+                .participants(participants)
                 .build();
     }
 
