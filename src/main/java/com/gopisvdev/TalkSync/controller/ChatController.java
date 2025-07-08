@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,5 +26,12 @@ public class ChatController {
     @PostMapping("/private")
     public ResponseEntity<ChatResponse> getOrCreatePrivateChat(@RequestParam UUID userId, @RequestParam UUID targetUserId) {
         return ResponseEntity.ok(chatService.getPrivateChat(userId, targetUserId));
+    }
+
+    @DeleteMapping("/{chatId}")
+    public ResponseEntity<Void> deleteChat(@PathVariable UUID chatId) throws AccessDeniedException {
+        UUID userId = AuthUtil.getCurrentUserId();
+        chatService.deleteChat(chatId, userId);
+        return ResponseEntity.noContent().build();
     }
 }

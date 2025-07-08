@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Repository
 public interface ChatParticipantRepository extends JpaRepository<ChatParticipant, UUID> {
-
+    
     List<ChatParticipant> findByChatId(UUID chatId);
 
     boolean existsByChatIdAndUserId(UUID chatId, UUID userId);

@@ -8,13 +8,16 @@ import com.gopisvdev.TalkSync.entity.Chat;
 import com.gopisvdev.TalkSync.entity.ChatParticipant;
 import com.gopisvdev.TalkSync.entity.Message;
 import com.gopisvdev.TalkSync.entity.User;
+import com.gopisvdev.TalkSync.exception.ChatNotFoundException;
 import com.gopisvdev.TalkSync.exception.UserNotFoundException;
 import com.gopisvdev.TalkSync.repository.ChatRepository;
 import com.gopisvdev.TalkSync.repository.UserRepository;
 import com.gopisvdev.TalkSync.service.interfaces.ChatService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -131,11 +134,6 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public ChatResponse getChatById(UUID chatId, UUID userId) {
-        return null;
-    }
-
-    @Override
     public ChatResponse updateGroupChat(UpdateGroupChatRequest request, UUID userId) {
         return null;
     }
@@ -156,12 +154,20 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public void deleteChat(UUID chatId, UUID requestedBy) {
+    @Transactional
+    public void deleteChat(UUID chatId, UUID requestedBy) throws AccessDeniedException {
+        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new ChatNotFoundException("Chat Not Found"));
 
-    }
+        if (chat.getIsGroup()) {
+            throw new IllegalArgumentException("This delete method only supports private chats");
+        }
 
-    @Override
-    public Optional<ChatResponse> findPrivateChat(UUID userA, UUID userB) {
-        return Optional.empty();
+        boolean isParticipant = chat.getParticipants().stream().anyMatch((p) -> p.getUser().getId().equals(requestedBy));
+
+        if (!isParticipant) {
+            throw new AccessDeniedException("You are not allowed to delete");
+        }
+
+        chatRepository.delete(chat);
     }
 }

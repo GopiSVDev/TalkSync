@@ -5,8 +5,8 @@ import com.gopisvdev.TalkSync.dto.chat.CreateGroupChatRequest;
 import com.gopisvdev.TalkSync.dto.chat.UpdateGroupChatRequest;
 import com.gopisvdev.TalkSync.entity.Chat;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface ChatService {
@@ -19,8 +19,6 @@ public interface ChatService {
 
     ChatResponse createGroupChat(CreateGroupChatRequest request, UUID creatorId);
 
-    ChatResponse getChatById(UUID chatId, UUID userId);
-
     ChatResponse updateGroupChat(UpdateGroupChatRequest request, UUID userId);
 
     void addUserToChat(UUID chatId, UUID userIdToAdd, UUID addedBy);
@@ -29,7 +27,5 @@ public interface ChatService {
 
     void leaveChat(UUID chatId, UUID userId);
 
-    void deleteChat(UUID chatId, UUID requestedBy);
-
-    Optional<ChatResponse> findPrivateChat(UUID userA, UUID userB);
+    void deleteChat(UUID chatId, UUID requestedBy) throws AccessDeniedException;
 }
