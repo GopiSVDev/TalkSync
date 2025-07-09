@@ -13,9 +13,9 @@ import com.gopisvdev.TalkSync.exception.UserNotFoundException;
 import com.gopisvdev.TalkSync.repository.ChatRepository;
 import com.gopisvdev.TalkSync.repository.UserRepository;
 import com.gopisvdev.TalkSync.service.interfaces.ChatService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;

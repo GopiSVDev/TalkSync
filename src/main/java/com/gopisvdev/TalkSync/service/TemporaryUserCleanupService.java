@@ -1,13 +1,12 @@
 package com.gopisvdev.TalkSync.service;
 
 import com.gopisvdev.TalkSync.entity.User;
-import com.gopisvdev.TalkSync.repository.ChatParticipantRepository;
-import com.gopisvdev.TalkSync.repository.MessageRepository;
-import com.gopisvdev.TalkSync.repository.MessageSeenRepository;
 import com.gopisvdev.TalkSync.repository.UserRepository;
+import com.gopisvdev.TalkSync.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,20 +16,15 @@ import java.util.List;
 public class TemporaryUserCleanupService {
 
     private final UserRepository userRepository;
-
-    private final MessageRepository messageRepository;
-
-    private final MessageSeenRepository messageSeenRepository;
-
-    private final ChatParticipantRepository chatParticipantRepository;
+    private final UserService userService;
 
     @Scheduled(fixedRate = 1000 * 60 * 60 * 24)
+    @Transactional
     public void deleteExpiredTemporaryUsers() {
         List<User> expiredUsers = userRepository.findByIsTemporaryTrueAndExpiresAtBefore(LocalDateTime.now());
 
         expiredUsers.forEach(user -> {
-
-            userRepository.deleteById(user.getId());
+            userService.deleteUser(user.getId());
         });
 
         if (!expiredUsers.isEmpty()) {

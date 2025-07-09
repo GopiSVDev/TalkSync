@@ -4,11 +4,13 @@ import com.gopisvdev.TalkSync.dto.chat.ChatResponse;
 import com.gopisvdev.TalkSync.dto.chat.CreateGroupChatRequest;
 import com.gopisvdev.TalkSync.dto.chat.UpdateGroupChatRequest;
 import com.gopisvdev.TalkSync.entity.Chat;
+import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public interface ChatService {
 
     List<ChatResponse> getUserChats(UUID userId);
