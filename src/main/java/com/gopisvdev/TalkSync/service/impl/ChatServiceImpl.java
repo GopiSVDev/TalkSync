@@ -10,9 +10,10 @@ import com.gopisvdev.TalkSync.entity.Message;
 import com.gopisvdev.TalkSync.entity.User;
 import com.gopisvdev.TalkSync.exception.ChatNotFoundException;
 import com.gopisvdev.TalkSync.exception.UserNotFoundException;
-import com.gopisvdev.TalkSync.repository.ChatRepository;
-import com.gopisvdev.TalkSync.repository.UserRepository;
+import com.gopisvdev.TalkSync.repository.*;
 import com.gopisvdev.TalkSync.service.interfaces.ChatService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,15 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
 
     private final UserRepository userRepository;
+
+    private final MessageRepository messageRepository;
+
+    private final MessageSeenRepository messageSeenRepository;
+
+    private final ChatParticipantRepository chatParticipantRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
     public List<ChatResponse> getUserChats(UUID userId) {
@@ -167,6 +177,14 @@ public class ChatServiceImpl implements ChatService {
         if (!isParticipant) {
             throw new AccessDeniedException("You are not allowed to delete");
         }
+
+        chatRepository.clearLastMessage(chat.getId());
+        em.flush();
+        em.detach(chat);
+        
+        messageSeenRepository.deleteByChatId(chat.getId());
+        messageRepository.deleteByChatId(chat.getId());
+        chatParticipantRepository.deleteByChatId(chat.getId());
 
         chatRepository.delete(chat);
     }

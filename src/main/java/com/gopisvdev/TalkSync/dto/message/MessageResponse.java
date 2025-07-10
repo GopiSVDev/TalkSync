@@ -1,9 +1,11 @@
 package com.gopisvdev.TalkSync.dto.message;
 
 import com.gopisvdev.TalkSync.entity.Message;
+import com.gopisvdev.TalkSync.entity.MessageSeen;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -20,6 +22,7 @@ public class MessageResponse {
     private String mediaType;
     private LocalDateTime createdAt;
     private LocalDateTime sentAt;
+    private List<MessageSeen> seenBy;
 
     public static MessageResponse from(Message message) {
         return new MessageResponse(
@@ -30,7 +33,8 @@ public class MessageResponse {
                 message.getMediaUrl(),
                 message.getMediaType() != null ? message.getMediaType().name() : null,
                 message.getCreatedAt(),
-                message.getSentAt()
+                message.getSentAt(),
+                message.getSeenBy()
         );
     }
 }

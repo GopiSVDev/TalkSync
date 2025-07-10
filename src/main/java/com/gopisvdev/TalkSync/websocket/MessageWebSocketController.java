@@ -6,6 +6,7 @@ import com.gopisvdev.TalkSync.dto.message.SeenMessageRequest;
 import com.gopisvdev.TalkSync.dto.message.SendMessageRequest;
 import com.gopisvdev.TalkSync.service.interfaces.MessageSeenService;
 import com.gopisvdev.TalkSync.service.interfaces.MessageService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -19,7 +20,7 @@ public class MessageWebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/chat.send")
-    public void send(SendMessageRequest request) {
+    public void send(@Valid SendMessageRequest request) {
         MessageResponse response = messageService.sendMessage(request);
         messagingTemplate.convertAndSend("/topic/chat." + request.getChatId(), response);
     }

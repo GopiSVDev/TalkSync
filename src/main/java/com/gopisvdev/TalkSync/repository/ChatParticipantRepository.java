@@ -5,7 +5,9 @@ import com.gopisvdev.TalkSync.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +15,7 @@ import java.util.UUID;
 
 @Repository
 public interface ChatParticipantRepository extends JpaRepository<ChatParticipant, UUID> {
-    
+
     List<ChatParticipant> findByChatId(UUID chatId);
 
     boolean existsByChatIdAndUserId(UUID chatId, UUID userId);
@@ -31,4 +33,9 @@ public interface ChatParticipantRepository extends JpaRepository<ChatParticipant
     @Modifying
     @Query("DELETE FROM ChatParticipant cp WHERE cp.user.id = :userId")
     void deleteAllByUserId(UUID userId);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM ChatParticipant cp WHERE cp.chat.id = :chatId")
+    void deleteByChatId(@Param("chatId") UUID chatId);
 }

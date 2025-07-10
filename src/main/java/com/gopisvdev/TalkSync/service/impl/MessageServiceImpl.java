@@ -31,6 +31,14 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @Transactional
     public MessageResponse sendMessage(SendMessageRequest request) {
+
+        if (request.getChatId() == null) {
+            throw new IllegalArgumentException("Chat ID must not be null");
+        }
+        if (request.getSenderId() == null) {
+            throw new IllegalArgumentException("Sender ID must not be null");
+        }
+
         Chat chat = chatRepository.findById(request.getChatId())
                 .orElseThrow(() -> new ChatNotFoundException("Chat not found"));
 

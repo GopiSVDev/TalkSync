@@ -28,10 +28,10 @@ public class Chat {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Builder.Default
-    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY)
     private List<ChatParticipant> participants = new ArrayList<>();
 
-    @OneToOne
-    @JoinColumn(name = "last_message_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "last_message_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Message lastMessage;
 }

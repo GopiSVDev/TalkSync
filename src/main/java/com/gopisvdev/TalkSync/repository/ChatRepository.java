@@ -2,9 +2,11 @@ package com.gopisvdev.TalkSync.repository;
 
 import com.gopisvdev.TalkSync.entity.Chat;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,4 +41,8 @@ public interface ChatRepository extends JpaRepository<Chat, UUID> {
             """)
     Optional<Chat> findByIdWithParticipants(UUID chatId);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE Chat c SET c.lastMessage = NULL WHERE c.id = :chatId")
+    void clearLastMessage(@Param("chatId") UUID chatId);
 }
