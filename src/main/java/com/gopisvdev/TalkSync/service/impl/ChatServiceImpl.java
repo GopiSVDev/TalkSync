@@ -119,6 +119,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    @Transactional
     public Chat createPrivateChat(UUID userId, UUID targetUserId) {
         Chat newChat = Chat.builder().isGroup(false)
                 .createdAt(LocalDateTime.now())
@@ -178,14 +179,18 @@ public class ChatServiceImpl implements ChatService {
             throw new AccessDeniedException("You are not allowed to delete");
         }
 
+
         chatRepository.clearLastMessage(chat.getId());
+
         em.flush();
         em.detach(chat);
-        
+
         messageSeenRepository.deleteByChatId(chat.getId());
         messageRepository.deleteByChatId(chat.getId());
         chatParticipantRepository.deleteByChatId(chat.getId());
 
-        chatRepository.delete(chat);
+        em.clear();
+
+        chatRepository.deleteById(chat.getId());
     }
 }
