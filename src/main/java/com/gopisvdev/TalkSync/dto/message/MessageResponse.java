@@ -1,7 +1,6 @@
 package com.gopisvdev.TalkSync.dto.message;
 
 import com.gopisvdev.TalkSync.entity.Message;
-import com.gopisvdev.TalkSync.entity.MessageSeen;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -22,9 +21,18 @@ public class MessageResponse {
     private String mediaType;
     private LocalDateTime createdAt;
     private LocalDateTime sentAt;
-    private List<MessageSeen> seenBy;
+    private List<MessageSeenNotification> seenBy;
 
     public static MessageResponse from(Message message) {
+
+        List<MessageSeenNotification> seenDTOs = message.getSeenBy().stream()
+                .map(seen -> new MessageSeenNotification(
+                        message.getId(),
+                        seen.getUser().getId(),
+                        seen.getSeenAt(),
+                        false
+                )).toList();
+
         return new MessageResponse(
                 message.getId(),
                 message.getChat().getId(),
@@ -34,7 +42,7 @@ public class MessageResponse {
                 message.getMediaType() != null ? message.getMediaType().name() : null,
                 message.getCreatedAt(),
                 message.getSentAt(),
-                message.getSeenBy()
+                seenDTOs
         );
     }
 }

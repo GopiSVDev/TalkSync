@@ -14,13 +14,14 @@ import java.util.UUID;
 
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, UUID> {
-
-    @Query("""
-              SELECT c FROM Chat c
-              JOIN c.participants p
-              WHERE p.user.id = :userId
-              ORDER BY c.createdAt DESC
-            """)
+    
+    @Query("SELECT DISTINCT c FROM Chat c " +
+            "LEFT JOIN FETCH c.participants cp " +
+            "LEFT JOIN FETCH cp.user " +
+            "LEFT JOIN FETCH c.lastMessage " +
+            "WHERE EXISTS (" +
+            "   SELECT 1 FROM ChatParticipant cp2 WHERE cp2.chat = c AND cp2.user.id = :userId" +
+            ")")
     List<Chat> findAllByUserId(UUID userId);
 
     @Query("""

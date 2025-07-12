@@ -14,6 +14,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,6 +24,7 @@ public class WebSocketEventListener {
     private final UserService userService;
 
     private final Map<String, UUID> sessionUserMap = new ConcurrentHashMap<>();
+    private final Map<UUID, Set<String>> userSessionsMap = new ConcurrentHashMap<>();
 
     private final SimpMessagingTemplate messagingTemplate;
 
@@ -38,8 +40,13 @@ public class WebSocketEventListener {
 
         if (userId != null && sessionId != null) {
             sessionUserMap.put(sessionId, userId);
-            userService.updateOnlineStatus(userId, true);
-            broadcastStatus(userId, true);
+
+            userSessionsMap.computeIfAbsent(userId, k -> ConcurrentHashMap.newKeySet()).add(sessionId);
+
+            if (userSessionsMap.get(userId).size() == 1) {
+                userService.updateOnlineStatus(userId, true);
+                broadcastStatus(userId, true);
+            }
         }
     }
 
@@ -60,9 +67,19 @@ public class WebSocketEventListener {
         log.info("WebSocket DISCONNECT: sessionId={}, userId={}", sessionId, userId);
 
         if (userId != null) {
-            userService.updateOnlineStatus(userId, false);
-            userService.updateLastSeen(userId, LocalDateTime.now());
-            broadcastStatus(userId, false);
+            Set<String> sessions = userSessionsMap.get(userId);
+
+            if (sessions != null) {
+                sessions.remove(sessionId);
+
+                if (sessions.isEmpty()) {
+                    userSessionsMap.remove(userId);
+                    userService.updateOnlineStatus(userId, false);
+                    userService.updateLastSeen(userId, LocalDateTime.now());
+                    broadcastStatus(userId, false);
+                }
+            }
+
         }
     }
 
