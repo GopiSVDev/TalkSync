@@ -3,6 +3,7 @@ package com.gopisvdev.TalkSync.service.impl;
 import com.gopisvdev.TalkSync.dto.message.MessageResponse;
 import com.gopisvdev.TalkSync.dto.message.SendMessageRequest;
 import com.gopisvdev.TalkSync.entity.Chat;
+import com.gopisvdev.TalkSync.entity.ChatParticipant;
 import com.gopisvdev.TalkSync.entity.Message;
 import com.gopisvdev.TalkSync.entity.User;
 import com.gopisvdev.TalkSync.exception.ChatNotFoundException;
@@ -14,6 +15,7 @@ import com.gopisvdev.TalkSync.service.interfaces.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Override
     @Transactional
@@ -55,6 +58,15 @@ public class MessageServiceImpl implements MessageService {
 
         chat.setLastMessage(saved);
         chatRepository.save(chat);
+
+        List<UUID> participantsIds = chat.getParticipants().stream()
+                .map(ChatParticipant::getUser)
+                .map(User::getId)
+                .toList();
+
+        for (UUID participantId : participantsIds) {
+            messagingTemplate.convertAndSend("/topic/chat.refresh." + participantId, "refresh");
+        }
 
         return MessageResponse.from(saved);
     }

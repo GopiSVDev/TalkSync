@@ -147,7 +147,7 @@ public class ChatServiceImpl implements ChatService {
                 .toList();
 
         for (UUID participantId : participantsIds) {
-            messagingTemplate.convertAndSend("/topic/chat.created." + participantId, "refresh");
+            messagingTemplate.convertAndSend("/topic/chat.refresh." + participantId, "refresh");
         }
 
         return saved;
