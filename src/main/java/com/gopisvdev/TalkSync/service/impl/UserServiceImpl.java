@@ -50,23 +50,21 @@ public class UserServiceImpl implements UserService {
     private final UsernameGenerator usernameGenerator;
 
     @Override
+    @Transactional
     public LoginResponse register(UserRegisterRequest request) {
-        User user = null;
-
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new UsernameAlreadyExistsException("Username already exists");
         }
 
-        user = User.builder()
+        User user = User.builder()
                 .username(request.getUsername())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .name(request.getDisplayName())
                 .isTemporary(false)
                 .build();
 
-        userRepository.save(user);
+        user = userRepository.save(user);
 
-        user = userRepository.findByUsername(request.getUsername()).get();
         String token = jwtService.generateToken(user);
 
         UserResponse userResponse = UserResponse.builder()
@@ -119,6 +117,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserResponse updateProfile(UserUpdateRequest updateRequest) {
         User user = userRepository.findById(updateRequest.getId()).orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -134,8 +133,7 @@ public class UserServiceImpl implements UserService {
             user.setPasswordHash(passwordEncoder.encode(updateRequest.getPassword()));
         }
 
-        userRepository.save(user);
-        user = userRepository.findById(updateRequest.getId()).get();
+        user = userRepository.save(user);
 
         return UserResponse.builder()
                 .id(user.getId())
