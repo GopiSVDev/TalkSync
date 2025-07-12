@@ -80,11 +80,11 @@
             <version>0.12.6</version>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>io.github.cdimascio</groupId>
-            <artifactId>dotenv-java</artifactId>
-            <version>3.0.0</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>io.github.cdimascio</groupId>-->
+        <!--            <artifactId>dotenv-java</artifactId>-->
+        <!--            <version>3.0.0</version>-->
+        <!--        </dependency>-->
 
         <!--    Fake name generator    -->
         <dependency>
@@ -92,7 +92,7 @@
             <artifactId>javafaker</artifactId>
             <version>1.0.2</version>
         </dependency>
-        
+
 
         <!--  Testing  -->
         <dependency>
