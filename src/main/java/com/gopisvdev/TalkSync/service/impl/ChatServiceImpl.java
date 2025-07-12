@@ -15,6 +15,7 @@ import com.gopisvdev.TalkSync.service.interfaces.ChatService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,8 @@ public class ChatServiceImpl implements ChatService {
     private final MessageSeenRepository messageSeenRepository;
 
     private final ChatParticipantRepository chatParticipantRepository;
+
+    private final SimpMessagingTemplate messagingTemplate;
 
     @PersistenceContext
     private EntityManager em;
@@ -136,7 +139,18 @@ public class ChatServiceImpl implements ChatService {
         newChat.getParticipants().add(participant1);
         newChat.getParticipants().add(participant2);
 
-        return chatRepository.save(newChat);
+        Chat saved = chatRepository.save(newChat);
+
+        List<UUID> participantsIds = saved.getParticipants().stream()
+                .map(ChatParticipant::getUser)
+                .map(User::getId)
+                .toList();
+
+        for (UUID participantId : participantsIds) {
+            messagingTemplate.convertAndSend("/topic/chat.created." + participantId, "refresh");
+        }
+
+        return saved;
     }
 
     @Override
@@ -190,6 +204,15 @@ public class ChatServiceImpl implements ChatService {
         chatParticipantRepository.deleteByChatId(chat.getId());
 
         em.clear();
+
+        List<UUID> participantsIds = chat.getParticipants().stream()
+                .map(ChatParticipant::getUser)
+                .map(User::getId)
+                .toList();
+
+        for (UUID participantId : participantsIds) {
+            messagingTemplate.convertAndSend("/topic/chat.refresh." + participantId, "refresh");
+        }
 
         chatRepository.deleteById(chat.getId());
     }
