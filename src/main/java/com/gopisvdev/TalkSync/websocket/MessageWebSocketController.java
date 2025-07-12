@@ -1,6 +1,7 @@
 package com.gopisvdev.TalkSync.websocket;
 
 import com.gopisvdev.TalkSync.dto.message.MessageResponse;
+import com.gopisvdev.TalkSync.dto.message.MessageSeenNotification;
 import com.gopisvdev.TalkSync.dto.message.SeenMessageRequest;
 import com.gopisvdev.TalkSync.dto.message.SendMessageRequest;
 import com.gopisvdev.TalkSync.service.interfaces.MessageSeenService;
@@ -11,6 +12,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+
+import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,11 +33,28 @@ public class MessageWebSocketController {
     public void markSeen(@Payload SeenMessageRequest request) {
         var seenNotifications = messageSeenService.markMessagesAsSeen(request);
 
+        var messageIds = seenNotifications.stream()
+                .map(MessageSeenNotification::getMessageId)
+                .toList();
+
+        var payload = new SeenNotificationPayload(
+                request.getChatId(),
+                messageIds,
+                request.getUserId()
+        );
+
         seenNotifications.forEach(notification ->
                 messagingTemplate.convertAndSend(
                         "/topic/chat." + request.getChatId() + ".seen",
-                        notification
+                        payload
                 )
         );
+    }
+
+    public record SeenNotificationPayload(
+            UUID chatId,
+            List<UUID> messageIds,
+            UUID userId
+    ) {
     }
 }
