@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -40,9 +40,9 @@ public class Message {
     private MediaType mediaType;
 
     @CreationTimestamp
-    private OffsetDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    private OffsetDateTime sentAt;
+    private LocalDateTime sentAt;
 
     @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MessageSeen> seenBy = new ArrayList<>();
