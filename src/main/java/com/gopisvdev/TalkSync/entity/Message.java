@@ -40,7 +40,7 @@ public class Message {
     private MediaType mediaType;
 
     @CreationTimestamp
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private OffsetDateTime createdAt;
 
     private LocalDateTime sentAt;
 
