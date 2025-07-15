@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 @Entity
@@ -29,5 +30,5 @@ public class MessageSeen {
     private User user;
 
     @CreationTimestamp
-    private OffsetDateTime seenAt;
+    private OffsetDateTime seenAt = OffsetDateTime.now(ZoneOffset.UTC);
 }

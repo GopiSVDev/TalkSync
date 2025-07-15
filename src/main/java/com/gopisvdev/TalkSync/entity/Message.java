@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +41,7 @@ public class Message {
     private MediaType mediaType;
 
     @CreationTimestamp
-    private OffsetDateTime createdAt;
+    private OffsetDateTime createdAt = OffsetDateTime.now(ZoneOffset.UTC);
 
     private OffsetDateTime sentAt;
 

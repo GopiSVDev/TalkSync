@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 @Entity
@@ -29,5 +30,5 @@ public class ChatParticipant {
     private User user;
 
     @CreationTimestamp
-    private OffsetDateTime joinedAt;
+    private OffsetDateTime joinedAt = OffsetDateTime.now(ZoneOffset.UTC);
 }

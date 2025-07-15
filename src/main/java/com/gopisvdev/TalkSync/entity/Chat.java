@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class Chat {
     private Boolean isGroup = false;
 
     @CreationTimestamp
-    private OffsetDateTime createdAt;
+    private OffsetDateTime createdAt = OffsetDateTime.now(ZoneOffset.UTC);
 
     @Builder.Default
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

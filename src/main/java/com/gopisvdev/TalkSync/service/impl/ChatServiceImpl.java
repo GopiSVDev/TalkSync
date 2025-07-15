@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -125,7 +126,7 @@ public class ChatServiceImpl implements ChatService {
     @Transactional
     public Chat createPrivateChat(UUID userId, UUID targetUserId) {
         Chat newChat = Chat.builder().isGroup(false)
-                .createdAt(OffsetDateTime.now())
+                .createdAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
 
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
