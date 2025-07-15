@@ -24,7 +24,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -173,7 +174,7 @@ public class UserServiceImpl implements UserService {
                 .username(randomName)
                 .name(randomName)
                 .isTemporary(true)
-                .expiresAt(LocalDateTime.now().plusHours(24))
+                .expiresAt(OffsetDateTime.now(ZoneOffset.UTC).plusHours(24))
                 .build();
 
         userRepository.save(tempUser);
@@ -228,7 +229,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateLastSeen(UUID userId, LocalDateTime time) {
+    public void updateLastSeen(UUID userId, OffsetDateTime time) {
         userRepository.findById(userId).ifPresent(user -> {
             user.setLastSeen(time);
             userRepository.save(user);

@@ -3,7 +3,7 @@ package com.gopisvdev.TalkSync.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -27,8 +27,8 @@ public class User {
     @Column(nullable = true)
     private String email;
     private Boolean isOnline;
-    private LocalDateTime lastSeen;
+    private OffsetDateTime lastSeen;
 
     private Boolean isTemporary = false;
-    private LocalDateTime expiresAt;
+    private OffsetDateTime expiresAt;
 }

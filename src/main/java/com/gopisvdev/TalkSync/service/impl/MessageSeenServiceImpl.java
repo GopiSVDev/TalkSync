@@ -13,7 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +43,7 @@ public class MessageSeenServiceImpl implements MessageSeenService {
                 MessageSeen seen = new MessageSeen();
                 seen.setMessage(message);
                 seen.setUser(user);
-                seen.setSeenAt(LocalDateTime.now());
+                seen.setSeenAt(OffsetDateTime.now(ZoneOffset.UTC));
 
                 messageSeenRepository.save(seen);
 

@@ -19,7 +19,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,7 +53,7 @@ public class MessageServiceImpl implements MessageService {
         message.setChat(chat);
         message.setSender(sender);
         message.setContent(request.getContent());
-        message.setSentAt(LocalDateTime.now());
+        message.setSentAt(OffsetDateTime.now(ZoneOffset.UTC));
 
         Message saved = messageRepository.save(message);
 

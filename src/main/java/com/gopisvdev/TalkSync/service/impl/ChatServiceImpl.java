@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -80,7 +80,7 @@ public class ChatServiceImpl implements ChatService {
                     name,
                     avatarUrl,
                     isGroup,
-                    LocalDateTime.now(),
+                    chat.getCreatedAt(),
                     lastMessage != null ? lastMessage.getContent() : null,
                     lastMessage != null ? lastMessage.getSentAt() : null,
                     participants
@@ -125,7 +125,7 @@ public class ChatServiceImpl implements ChatService {
     @Transactional
     public Chat createPrivateChat(UUID userId, UUID targetUserId) {
         Chat newChat = Chat.builder().isGroup(false)
-                .createdAt(LocalDateTime.now())
+                .createdAt(OffsetDateTime.now())
                 .build();
 
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));

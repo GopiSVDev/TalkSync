@@ -6,7 +6,7 @@ import com.gopisvdev.TalkSync.dto.user.UserResponse;
 import com.gopisvdev.TalkSync.dto.user.UserUpdateRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,5 +28,5 @@ public interface UserService {
 
     void updateOnlineStatus(UUID userId, boolean isOnline);
 
-    void updateLastSeen(UUID userId, LocalDateTime time);
+    void updateLastSeen(UUID userId, OffsetDateTime time);
 }

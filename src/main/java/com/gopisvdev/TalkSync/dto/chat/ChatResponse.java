@@ -5,8 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,10 +20,12 @@ public class ChatResponse {
     private String name;
     private String avatarUrl;
     private boolean isGroup;
-    private LocalDateTime createdAt;
+
+    @CreationTimestamp
+    private OffsetDateTime createdAt;
 
     private String lastMessage;
-    private LocalDateTime lastMessageTime;
+    private OffsetDateTime lastMessageTime;
 
     private List<UserResponse> participants;
 }

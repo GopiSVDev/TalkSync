@@ -3,7 +3,7 @@ package com.gopisvdev.TalkSync.dto.message;
 import com.gopisvdev.TalkSync.entity.Message;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,8 +19,8 @@ public class MessageResponse {
     private String content;
     private String mediaUrl;
     private String mediaType;
-    private LocalDateTime createdAt;
-    private LocalDateTime sentAt;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime sentAt;
     private List<MessageSeenNotification> seenBy;
 
     public static MessageResponse from(Message message) {

@@ -2,8 +2,9 @@ package com.gopisvdev.TalkSync.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -27,5 +28,6 @@ public class ChatParticipant {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private LocalDateTime joinedAt = LocalDateTime.now();
+    @CreationTimestamp
+    private OffsetDateTime joinedAt;
 }

@@ -27,7 +27,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:5173", "https://talksync-ten.vercel.app/")
+                .setAllowedOrigins("http://10.70.249.47:5173", "http://localhost:5173", "https://talksync-ten.vercel.app")
                 .withSockJS();
     }
 

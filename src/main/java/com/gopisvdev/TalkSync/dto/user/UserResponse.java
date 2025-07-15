@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Getter
@@ -18,5 +18,5 @@ public class UserResponse {
     private String displayName;
     private String avatarUrl;
     private Boolean isOnline;
-    private LocalDateTime lastSeen;
+    private OffsetDateTime lastSeen;
 }

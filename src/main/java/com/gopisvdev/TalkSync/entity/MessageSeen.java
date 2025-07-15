@@ -5,8 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -27,5 +28,6 @@ public class MessageSeen {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    private LocalDateTime seenAt = LocalDateTime.now();
+    @CreationTimestamp
+    private OffsetDateTime seenAt;
 }

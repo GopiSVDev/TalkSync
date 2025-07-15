@@ -12,7 +12,8 @@ import org.springframework.web.socket.messaging.AbstractSubProtocolEvent;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -75,7 +76,7 @@ public class WebSocketEventListener {
                 if (sessions.isEmpty()) {
                     userSessionsMap.remove(userId);
                     userService.updateOnlineStatus(userId, false);
-                    userService.updateLastSeen(userId, LocalDateTime.now());
+                    userService.updateLastSeen(userId, OffsetDateTime.now(ZoneOffset.UTC));
                     broadcastStatus(userId, false);
                 }
             }
